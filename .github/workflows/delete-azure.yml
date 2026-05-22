@@ -24,7 +24,6 @@ jobs:
             --name banking-app \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --yes \
-            --no-wait
 
       - name: 'Delete Container Apps Environment'
         run: |
