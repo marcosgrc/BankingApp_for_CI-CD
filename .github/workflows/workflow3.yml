@@ -79,13 +79,13 @@ jobs:
       - name: 'Update Container App'
         run: |
           az containerapp update \
-            --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
+            --name banking-app-production \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --image ${{ secrets.DOCKERHUB_USERNAME }}/banking-app-production:${{ needs.build.outputs.version }}
 
       # Captura de la URL de Azure y ejecución de la prueba de humo apuntando directo a producción
       - name: 'Smoke test on Azure'
         run: |
-          FQDN=$(az containerapp show --name ${{ vars.AZURE_CONTAINER_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
+          FQDN=$(az containerapp show --name banking-app-production --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
           sleep 30
           xvfb-run -a mvn test -Dtest='es.codeurjc.e2e.SmokeTest' -DAPP_URL=https://$FQDN -DAPP_VERSION=${{ needs.build.outputs.version }}
