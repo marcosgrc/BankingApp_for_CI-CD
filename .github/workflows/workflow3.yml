@@ -7,6 +7,12 @@ on:
     paths:
       - 'src/**'
       - 'pom.xml'
+    # Evita ejecuciones absurdas si solo modificáis memorias o configs de CI
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/**'
+      - 'ANALISIS_CALIDAD.md'
+      - 'INFO.md'
 
   workflow_dispatch:
 
@@ -39,10 +45,11 @@ jobs:
       - name: Run container in background
         run: docker run -d --name banking-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ steps.project.outputs.tag }}
 
+      # Ejecución del SmokeTest de Selenium usando un servidor virtual Xvfb en el runner local
       - name: Smoke test on runner
         run: |
           sleep 30
-          curl -fsS http://localhost:8080/login
+          xvfb-run -a mvn test -Dtest='es.codeurjc.e2e.SmokeTest' -DAPP_URL=http://localhost:8080 -DAPP_VERSION=${{ steps.project.outputs.tag }}
 
       - name: Stop and remove container
         run: |
@@ -59,6 +66,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: maven
+
       - name: 'Az CLI login'
         uses: azure/login@v2
         with:
@@ -69,12 +85,13 @@ jobs:
       - name: 'Update Container App'
         run: |
           az containerapp update \
-            --name banking-app-production \
+            --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --image ${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ needs.build.outputs.version }}
 
+      # Captura de la URL de Azure y ejecución de la prueba de humo apuntando directo a producción
       - name: 'Smoke test on Azure'
         run: |
-          FQDN=$(az containerapp show --name banking-app-production --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
+          FQDN=$(az containerapp show --name ${{ vars.AZURE_CONTAINER_APP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} --query properties.configuration.ingress.fqdn -o tsv)
           sleep 30
-          curl -fsS https://$FQDN/login
+          xvfb-run -a mvn test -Dtest='es.codeurjc.e2e.SmokeTest' -DAPP_URL=https://$FQDN -DAPP_VERSION=${{ needs.build.outputs.version }}
