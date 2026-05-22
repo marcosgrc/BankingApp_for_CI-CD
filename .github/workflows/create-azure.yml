@@ -34,10 +34,10 @@ jobs:
       - name: 'Create and deploy Container App'
         run: |
           az containerapp create \
-            --name banking-app\
+            --name banking-app-production \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --environment ${{ secrets.AZURE_CONTAINER_ENV }} \
-            --image ${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ inputs.image_tag }} \
+            --image ${{ secrets.DOCKERHUB_USERNAME }}/banking-app-production:${{ inputs.image_tag }} \
             --target-port 8080 \
             --ingress external \
             --min-replicas 1 \
@@ -46,7 +46,7 @@ jobs:
       - name: 'Show application URL'
         run: |
           az containerapp show \
-            --name banking-app-production\
+            --name banking-app-production \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --query properties.configuration.ingress.fqdn \
             --output tsv
