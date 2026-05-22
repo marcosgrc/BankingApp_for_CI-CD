@@ -21,7 +21,7 @@ jobs:
       - name: 'Delete Container App'
         run: |
           az containerapp delete \
-            --name banking-app\
+            --name banking-app-production\
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --yes \
 

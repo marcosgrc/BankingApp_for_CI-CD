@@ -40,10 +40,10 @@ jobs:
         run: echo "tag=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)" >> $GITHUB_OUTPUT
 
       - name: Generate Docker image
-        run: mvn spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ steps.project.outputs.tag }}
+        run: mvn spring-boot:build-image -DskipTests -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/banking-app-production:${{ steps.project.outputs.tag }}
 
       - name: Run container in background
-        run: docker run -d --name banking-app -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ steps.project.outputs.tag }}
+        run: docker run -d --name banking-app-production -p 8080:8080 ${{ secrets.DOCKERHUB_USERNAME }}/banking-app-production:${{ steps.project.outputs.tag }}
 
       # Ejecución del SmokeTest de Selenium usando un servidor virtual Xvfb en el runner local
       - name: Smoke test on runner
@@ -53,14 +53,14 @@ jobs:
 
       - name: Stop and remove container
         run: |
-          docker stop banking-app
-          docker rm banking-app
+          docker stop banking-app-production
+          docker rm banking-app-production
 
       - name: Login to DockerHub
         run: docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" -p "${{ secrets.DOCKERHUB_TOKEN }}"
 
       - name: Push image to DockerHub
-        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ steps.project.outputs.tag }}
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/banking-app-production:${{ steps.project.outputs.tag }}
 
   deploy:
     runs-on: ubuntu-latest
@@ -87,7 +87,7 @@ jobs:
           az containerapp update \
             --name ${{ vars.AZURE_CONTAINER_APP_NAME }} \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --image ${{ secrets.DOCKERHUB_USERNAME }}/banking-app:${{ needs.build.outputs.version }}
+            --image ${{ secrets.DOCKERHUB_USERNAME }}/banking-app-production:${{ needs.build.outputs.version }}
 
       # Captura de la URL de Azure y ejecución de la prueba de humo apuntando directo a producción
       - name: 'Smoke test on Azure'

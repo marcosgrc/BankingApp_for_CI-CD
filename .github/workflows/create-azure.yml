@@ -46,7 +46,7 @@ jobs:
       - name: 'Show application URL'
         run: |
           az containerapp show \
-            --name banking-app\
+            --name banking-app-production\
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --query properties.configuration.ingress.fqdn \
             --output tsv
