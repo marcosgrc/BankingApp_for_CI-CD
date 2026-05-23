@@ -1,6 +1,5 @@
 package es.codeurjc.e2e;
 
-import java.io.IOException;
 import java.time.Duration;
 
 import org.openqa.selenium.WebDriver;
@@ -11,7 +10,6 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
-import org.openqa.selenium.safari.SafariDriverService;
 import org.openqa.selenium.safari.SafariOptions;
 
 public final class WebDriverFactory {
@@ -84,20 +82,9 @@ public final class WebDriverFactory {
     }
 
     private static WebDriver createSafari() {
-        SafariOptions options = new SafariOptions();
-        if (System.getenv("GITHUB_ACTIONS") != null) {
-            try {
-                SafariDriverService service = new SafariDriverService.Builder().build();
-                service.start();
-                WebDriver driver = new SafariDriver(service, options);
-                driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
-                driver.manage().window().maximize();
-                return driver;
-            } catch (IOException e) {
-                throw new IllegalStateException("Could not start SafariDriver service", e);
-            }
-        }
-        WebDriver driver = new SafariDriver(options);
+        WebDriver driver = new SafariDriver(new SafariOptions());
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
+        driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(30));
         driver.manage().window().maximize();
         return driver;
     }

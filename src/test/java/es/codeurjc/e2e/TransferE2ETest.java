@@ -4,6 +4,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
 import static org.openqa.selenium.support.ui.ExpectedConditions.urlContains;
+import static org.openqa.selenium.support.ui.ExpectedConditions.visibilityOfElementLocated;
 
 import es.codeurjc.BankingApplication;
 import es.codeurjc.model.Account;
@@ -108,12 +110,15 @@ public class TransferE2ETest {
 
     private void loginAsTestUser(WebDriverWait wait) {
         driver.get("http://localhost:" + port + "/login");
-        wait.until(presenceOfElementLocated(By.id("username"))).sendKeys(testUsername);
-        driver.findElement(By.id("password")).sendKeys(testPassword);
-        if ("safari".equalsIgnoreCase(System.getenv("BROWSER"))) {
-            driver.findElement(By.cssSelector("form[action='/login']")).submit();
+        WebElement username = wait.until(visibilityOfElementLocated(By.id("username")));
+        WebElement password = wait.until(visibilityOfElementLocated(By.id("password")));
+        BrowserTestHelper.fill(driver, username, testUsername);
+        BrowserTestHelper.fill(driver, password, testPassword);
+        if (BrowserTestHelper.isSafari()) {
+            ((JavascriptExecutor) driver).executeScript(
+                    "document.querySelector(\"form[action='/login']\").submit();");
         } else {
-            wait.until(elementToBeClickable(By.id("loginButton"))).click();
+            BrowserTestHelper.click(driver, wait.until(elementToBeClickable(By.id("loginButton"))));
         }
         wait.until(urlContains("/dashboard"));
     }
@@ -123,22 +128,23 @@ public class TransferE2ETest {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         loginAsTestUser(wait);
 
-        WebElement transferLink = wait.until(presenceOfElementLocated(By.cssSelector("a[href='/transfer']")));
-        transferLink.click();
+        if (BrowserTestHelper.isSafari()) {
+            driver.get("http://localhost:" + port + "/transfer");
+        } else {
+            BrowserTestHelper.click(driver,
+                    wait.until(elementToBeClickable(By.cssSelector("a[href='/transfer']"))));
+        }
 
-        // Select "from account" from drop-down
-        WebElement fromAccountElement = wait.until(presenceOfElementLocated(By.id("fromAccount")));
-        Select fromAccountDropdown = new Select(fromAccountElement);
-        fromAccountDropdown.selectByValue("ES9999999991");
+        WebElement fromAccountElement = wait.until(visibilityOfElementLocated(By.id("fromAccount")));
+        BrowserTestHelper.selectOptionByValue(fromAccountElement, "ES9999999991");
 
-        // Write "to account" number
-        driver.findElement(By.id("toAccount")).sendKeys("ES9999999992");
+        WebElement toAccount = wait.until(visibilityOfElementLocated(By.id("toAccount")));
+        BrowserTestHelper.fill(driver, toAccount, "ES9999999992");
 
-        // Enter amount
-        driver.findElement(By.id("amount")).sendKeys("100");
+        WebElement amount = wait.until(visibilityOfElementLocated(By.id("amount")));
+        BrowserTestHelper.fill(driver, amount, "100");
 
-        // Submit transfer
-        driver.findElement(By.id("transferButton")).click();
+        BrowserTestHelper.click(driver, wait.until(elementToBeClickable(By.id("transferButton"))));
 
         // Verify success message
         WebElement successMessage = wait.until(
