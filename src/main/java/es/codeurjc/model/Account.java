@@ -111,8 +111,10 @@ public class Account {
     // Equals
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
         Account account = (Account) o;
         return Objects.equals(accountNumber, account.accountNumber);
     }
@@ -147,6 +149,18 @@ public class Account {
         if (this.balance < amount) {
             throw new IllegalArgumentException("Insufficient funds");
         }
+
+        LocalDateTime yesterday = LocalDateTime.now().minusHours(24);
+        double withdrawnLast24h = this.transactions.stream()
+                .filter(t -> t.getType() == Transaction.TransactionType.WITHDRAWAL)
+                .filter(t -> t.getTimestamp().isAfter(yesterday))
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        if (withdrawnLast24h + amount > 5000) {
+            throw new IllegalArgumentException("Daily withdrawal limit of 5000 exceeded");
+        }
+
         this.balance -= amount;
     }
 
