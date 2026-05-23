@@ -8,6 +8,7 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.safari.SafariDriver;
+import org.openqa.selenium.safari.SafariDriverService;
 import org.openqa.selenium.safari.SafariOptions;
 
 public final class WebDriverFactory {
@@ -80,6 +81,12 @@ public final class WebDriverFactory {
     }
 
     private static WebDriver createSafari() {
-        return new SafariDriver(new SafariOptions());
+        SafariOptions options = new SafariOptions();
+        if (System.getenv("GITHUB_ACTIONS") != null) {
+            SafariDriverService service = new SafariDriverService.Builder().build();
+            service.start();
+            return new SafariDriver(service, options);
+        }
+        return new SafariDriver(options);
     }
 }

@@ -42,6 +42,14 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Configure Safari for WebDriver
+        if: matrix.browser == 'safari'
+        run: |
+          pkill -x Safari 2>/dev/null || true
+          safaridriver --enable || sudo safaridriver --enable
+          defaults write com.apple.Safari AllowRemoteAutomation 1
+          defaults write com.apple.Safari IncludeDevelopMenu 1
+
       - name: Run system test (transfer between own accounts)
         env:
           BROWSER: ${{ matrix.browser }}
