@@ -15,7 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.openqa.selenium.support.ui.ExpectedConditions.elementToBeClickable;
 import static org.openqa.selenium.support.ui.ExpectedConditions.presenceOfElementLocated;
+import static org.openqa.selenium.support.ui.ExpectedConditions.urlContains;
 
 import es.codeurjc.BankingApplication;
 import es.codeurjc.model.Account;
@@ -104,20 +106,25 @@ public class TransferE2ETest {
         }
     }
 
+    private void loginAsTestUser(WebDriverWait wait) {
+        driver.get("http://localhost:" + port + "/login");
+        wait.until(presenceOfElementLocated(By.id("username"))).sendKeys(testUsername);
+        driver.findElement(By.id("password")).sendKeys(testPassword);
+        if ("safari".equalsIgnoreCase(System.getenv("BROWSER"))) {
+            driver.findElement(By.cssSelector("form[action='/login']")).submit();
+        } else {
+            wait.until(elementToBeClickable(By.id("loginButton"))).click();
+        }
+        wait.until(urlContains("/dashboard"));
+    }
+
     @Test
     public void testTransferOwnAccountsSuccess() throws InterruptedException {
-        // En lugar de ir directamente a localhost, iniciamos sesión primero:
-        driver.get("http://localhost:" + port + "/login");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(60));
+        loginAsTestUser(wait);
 
-        // Log in
-        driver.findElement(By.id("username")).sendKeys(testUsername);
-        driver.findElement(By.id("password")).sendKeys(testPassword);
-        driver.findElement(By.id("loginButton")).click();
-
-        // Go to transfer page
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-        WebElement text = wait.until(presenceOfElementLocated(By.cssSelector("a[href='/transfer']")));
-        text.click();
+        WebElement transferLink = wait.until(presenceOfElementLocated(By.cssSelector("a[href='/transfer']")));
+        transferLink.click();
 
         // Select "from account" from drop-down
         WebElement fromAccountElement = wait.until(presenceOfElementLocated(By.id("fromAccount")));
