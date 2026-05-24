@@ -197,7 +197,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
-| feature-2 | [Nombre 3], [Nombre 4] | [Commit 3](URL_commit_3), [Commit 4](URL_commit_4) |
+| feature-2 | Adrián y Jorge | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/c87e795b2f5040366e2394f090eb6bfc00d303de), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/bbad60287f83fc0fbda0db9490fd4ae5a335843f) |
 | feature-3 | Marcos e Icíar | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/d6319441355c84fbec3fe50528b8e39cabc24ccd) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ... |
 
@@ -215,7 +215,66 @@ $ git clone https://github.com/Albermg27/cs-2026-grupo-2
 
 #### Feature-1
 
+
+
 #### Feature-2
+Para la implementación de la **Feature-2**, cuya funcionalidad consiste en impedir que un usuario con el atributo `banned` a `true` realice operaciones sobre su cuenta, se siguieron los siguientes pasos y comandos de Git.
+
+6. **Implementación de los tests unitarios de la Feature 2:**
+    Durante esta etapa se modificó el fichero `src/test/java/es/codeurjc/unit/AccountServiceTest.java` para añadir pruebas que verifican el correcto funcionamiento de la restricción de usuarios baneados.
+
+    Los escenarios de prueba incluidos fueron los siguientes:
+    * **Usuario baneado intentando ingresar dinero:** Se comprueba que el método `deposit` lanza una excepción del tipo `IllegalArgumentException` con el mensaje `"User is banned and cannot perform account operations"`y se verifica que no se persiste ninguna transacción ni se guarda la cuenta.
+    * **Usuario baneado intentando retirar dinero:** Se valida que el método `withdraw` también bloquea la operación y lanza la misma excepción, sin guardar cambios en el repositorio.
+    * **Usuario baneado intentando realizar una transferencia:** Se comprueba que el método `transfer` impide la operación cuando el usuario de origen está baneado, sin persistir ni la transferencia ni los cambios en las cuentas.
+
+7. **Añadir los cambios al área de preparación (*staging area*):**
+   ```bash
+   git add src/test/java/es/codeurjc/unit/AccountServiceTest.java
+   ```
+   * **Explicación:** Este comando añade al área de preparación únicamente el fichero modificado con los tests unitarios
+8. **Guardar los cambios (Commit):**
+   ```bash
+   git commit -m "Feature 2 Tests"
+   ```
+   * **Explicación:** Este comando crea un commit con las pruebas unitarias añadidas para cubrir la nueva funcionalidad
+9. **Publicación y subida de la rama a GitHub (Push):**
+   ```bash
+   git push origin feature-2
+   ```
+   * **Explicación:** Este comando sube la rama `feature-2` al repositorio remoto para poder abrir el Pull Request correspondiente.
+   Esto desencadena el workflow 1, su resultado es accesible en el siguiente link: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26364677156)
+
+10. **Creación del Pull Request:**
+    Al acceder al repositorio en GitHub, aparece un banner sugiriendo crear un Pull Request desde la rama `feature-2` hacia la rama principal `main`. Se hace clic en **"Compare & pull request"**, se describe el trabajo realizado y se pulsa en **"Create pull request"**.
+
+    Durante el proceso de integración surgieron conflictos debido a que otra rama (`feature-1`) había sido fusionada previamente sobre `main`, afectando a algunos de los mismos ficheros modificados en esta feature, especialmente `AccountServiceTest.java`.
+
+    Para resolver estos conflictos, se realizó una actualización de la rama local y se corrigieron manualmente las inconsistencias generadas durante el merge. Posteriormente, se creó un nuevo commit con la resolución de conflictos:
+
+    ```bash
+    git add .
+    git commit -m "Fix merge conflicts in AccountServiceTest"
+    git push origin feature-2
+    ```
+
+    * **Explicación:** Estos comandos añaden la resolución manual de los conflictos al área de preparación, crean un nuevo commit con las correcciones necesarias y actualizan automáticamente el Pull Request remoto en GitHub.
+
+    Esto desencadena el **Workflow 2**, cuyo resultado es accesible en el siguiente enlace: [Resultado Workflow 2](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26365764225/job/77609175834?pr=4)
+
+    (Previo a esto, el commit resolviendo los conflictos desencadenó nuevamente el **Workflow 1**, que vemos aquí: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26365763922))
+
+11. **Fusión (Merge) a la rama principal `main`:**
+   Una vez que se hayan integrado las pruebas unitarias y E2E, y que el pipeline de integración continua (GitHub Actions) marque en verde, se procede a fusionar los cambios:
+   
+   Se accede al Pull Request y se hace clic en el botón verde **"Merge pull request"**, se confirma la acción mediante **"Confirm merge"** y posteriormente se selecciona **"Delete branch"** para eliminar la rama del repositorio remoto de manera limpia.
+
+   Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26365906608/job/77609696679)
+
+   Durante este workflow se construyó y publicó la imagen Docker de la aplicación, pudiendo ser consultada en el siguiente enlace: [marcosgrc/banking-app-production:1.2.0](https://hub.docker.com/layers/marcosgrc/banking-app-production/1.2.0/images/sha256-a7dbef7f4d8241263eb17a0887676fe951e8556e2321347f0e406ff5673e6b35)
+
+   Además, una vez completado el despliegue, Azure genera una URL pública desde la que puede accederse a la aplicación desplegada: ![Aplicación desplegada v1.2.0](/img/v1.2.0.png)
+
 
 #### Feature-3
 Para la implementación de la funcionalidad de la **Feature-3**, que consiste en restringir las transferencias bancarias únicamente a usuarios mayores de 18 años, se siguieron los siguientes pasos y comandos de Git:
