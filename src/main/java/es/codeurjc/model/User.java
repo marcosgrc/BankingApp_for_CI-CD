@@ -39,7 +39,9 @@ public class User {
     
     @Enumerated(EnumType.STRING)
     private NotificationType notificationType = NotificationType.EMAIL;
-    
+
+    private boolean banned = false;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Account> accounts = new ArrayList<>();
     
@@ -163,9 +165,17 @@ public class User {
     public NotificationType getNotificationType() {
         return notificationType;
     }
-    
+
     public void setNotificationType(NotificationType notificationType) {
         this.notificationType = notificationType;
+    }
+
+    public boolean isBanned() {
+        return banned;
+    }
+
+    public void setBanned(boolean banned) {
+        this.banned = banned;
     }
     
     public List<Account> getAccounts() {

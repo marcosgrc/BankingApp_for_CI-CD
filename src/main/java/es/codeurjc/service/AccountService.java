@@ -83,6 +83,7 @@ public class AccountService {
         validateAmount(amount, MAX_DEPOSIT_LIMIT, "deposit");
 
         Account account = getAccount(new AccountNumber(accountNumber.getValue()));
+        validateUserNotBanned(account.getUser());
         account.deposit(amount.getValue());
 
         // Record transaction
@@ -116,6 +117,7 @@ public class AccountService {
     public Account withdraw(AccountNumber accountNumber, Amount amount, String description) {
         validateAmount(amount, MAX_WITHDRAW_LIMIT, "withdrawal");
         Account account = getAccount(accountNumber);
+        validateUserNotBanned(account.getUser());
 
         account.withdraw(amount.getValue());
 
@@ -146,6 +148,9 @@ public class AccountService {
         if (fromAccount.getAccountNumber().equals(toAccount.getAccountNumber())) {
             throw new IllegalArgumentException("Cannot transfer to same account");
         }
+
+        validateUserNotBanned(fromAccount.getUser());
+        validateUserNotBanned(toAccount.getUser());
 
         performFinancialTransfer(fromAccount, toAccount, amount);
         recordTransferTransactions(fromAccount, toAccount, amount);
@@ -237,6 +242,15 @@ public class AccountService {
     private void validateAmount(Amount amount, double max, String message){
         if (amount.getValue() > max) {
             throw new IllegalArgumentException("Amount exceeds maximum "+ message +" limit");
+        }
+    }
+
+    /**
+     * Validate that the user is not banned
+     */
+    private void validateUserNotBanned(User user) {
+        if (user != null && user.isBanned()) {
+            throw new IllegalArgumentException("User is banned and cannot perform account operations");
         }
     }
 
