@@ -193,9 +193,12 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 ### Asignación de tareas
 
 | Tarea | Alumno/es asignado/s | Commits asociado |
-|:--- |:--- |:--- |
+|:--- |:--- |:--- | 
+| Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
+| Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | feature-2 | [Nombre 3], [Nombre 4] | [Commit 3](URL_commit_3), [Commit 4](URL_commit_4) |
+| feature-3 | Marcos e Icíar | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/d6319441355c84fbec3fe50528b8e39cabc24ccd) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ... |
 
 ### Pasos seguidos
@@ -205,13 +208,97 @@ Una vez creados los workflows y funcionando estos, pasamos a crear la nueva func
 Clonamos el repositorio
 
 ```
-$ git clone git@github.com:codigus-formacion-se/banking-app-2026.git
+$ git clone https://github.com/Albermg27/cs-2026-grupo-2
 ```
 
 > Inserta aquí todos los comandos que has utilizado para crear la rama, implementar la funcionalidad, hacer el commit y push a GitHub, crear el pull request y hacer el merge a main. Acompaña cada comando con una breve explicación de lo que has hecho.
 
+#### Feature-1
+
+#### Feature-2
+
+#### Feature-3
+Para la implementación de la funcionalidad de la **Feature-3**, que consiste en restringir las transferencias bancarias únicamente a usuarios mayores de 18 años, se siguieron los siguientes pasos y comandos de Git:
+1. **Creación y cambio a la rama de desarrollo:**
+   ```bash
+   git checkout -b feature-3
+   ```
+   * **Explicación:** Este comando crea una rama local llamada `feature-3` a partir de `main` y nos cambia automáticamente a ella para poder trabajar de manera aislada y segura en el desarrollo de la funcionalidad.
+2. **Implementación de la funcionalidad en el código:**
+   Durante esta etapa, se modificaron y adaptaron los siguientes componentes de la aplicación:
+   * **Entidad `User` (`src/main/java/es/codeurjc/model/User.java`):** Se añadió el atributo `birthdate` de tipo `LocalDate` para almacenar la fecha de nacimiento de los usuarios, junto con sus métodos *getter* y *setter* correspondientes y la actualización de los constructores necesarios.
+   * **Servicio `AccountService` (`src/main/java/es/codeurjc/service/AccountService.java`):** Dentro del método `transfer`, se introdujo una regla de negocio y comprobación que determina la edad del usuario ordenante de la transferencia. En caso de ser menor de 18 años, el sistema impide la transacción arrojando una excepción.
+   * **Inicializador `DatabaseInitializer` (`src/main/java/es/codeurjc/config/DatabaseInitializer.java`):** Se actualizó la carga inicial de datos para asignar fechas de nacimiento específicas a los usuarios de prueba predeterminados.
+3. **Añadir los cambios al área de preparación (*staging area*):**
+   ```bash
+   git add src/main/java/es/codeurjc/model/User.java src/main/java/es/codeurjc/service/AccountService.java src/main/java/es/codeurjc/config/DatabaseInitializer.java
+   ```
+   * **Explicación:** Prepara y añade los tres ficheros modificados al área de preparación de Git, indicando que formarán parte de la próxima confirmación o commit.
+4. **Guardar los cambios (Commit):**
+   ```bash
+   git commit -m "Feature 3 implementation"
+   ```
+   * **Explicación:** Consolida y guarda en el historial de confirmaciones de la rama local los cambios preparados, acompañados de un mensaje de commit.
+5. **Publicación y subida de la rama a GitHub (Push):**
+   ```bash
+   git push origin feature-3
+   ```
+   * **Explicación:** Sube la rama local `feature-3` con su nuevo commit a GitHub, permitiendo que la rama esté disponible para el resto del equipo.
+   Esto desencadena el workflow 1, su resultado es accesible en el siguiente link: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26358163241)
+
+6. **Implementación y subida de los tests de la Feature 3:**
+
+    Tras implementar la lógica de negocio, se diseñaron y ejecutaron las pruebas unitarias en el fichero `src/test/java/es/codeurjc/unit/AccountServiceTest.java` para asegurar la robustez de la restricción por edad.
+    
+    Se utilizaron las anotaciones `@Test` y `@DisplayName` de JUnit 5 para describir de forma clara cada escenario de prueba ejecutado.
+
+    Los escenarios de prueba incluidos fueron los siguientes:
+    * **Usuario menor de edad (17 años):** Se comprueba que el método `transfer` lanza una excepción del tipo `IllegalArgumentException` con el mensaje exacto `"Users under 18 cannot perform transfers"` y se verifica mediante `verify(..., never()).save(any())` que el sistema bloquea la transacción sin persistir ningún cambio en la base de datos.
+    * **Usuario mayor de edad (25 años):** Se valida que se realiza la transacción correctamente, verificando matemáticamente que los saldos se actualizan de manera correcta tras la transferencia (reducción en origen e incremento en destino) y se comprueba que ambas cuentas se guardan con éxito en el repositorio.
+    * **Caso límite frontera (18 años cumplidos hoy):** Se comprueba que un usuario que cumple exactamente hoy los 18 años puede realizar la operación sin lanzar excepciones (`assertDoesNotThrow`), garantizando que la condición lógica incluye correctamente el día exacto del cumpleaños del usuario.
+
+7. **Creación del Pull Request (Plantilla / Proceso a seguir):**
+   Al acceder al repositorio en GitHub, aparecerá un banner sugiriendo crear un Pull Request desde la rama `feature-3` recién subida hacia la rama principal `main`. Se hace clic en **"Compare & pull request"**, se describe el trabajo realizado y se pulsa en **"Create pull request"**.
+
+   Esto desencadena el Workflow 2, su resultado es accesible en el siguiente link: [Resultado Workflow 2](???)
+
+8. **Fusión (Merge) a la rama principal `main` (Plantilla / Proceso a seguir):**
+   Una vez que se hayan integrado las pruebas unitarias y E2E, y que el pipeline de integración continua (GitHub Actions) marque en verde, se procede a fusionar los cambios:
+   
+   Se accede al Pull Request aprobado y se hace clic en el botón verde **"Merge pull request"**, se confirma la acción mediante **"Confirm merge"** y posteriormente se selecciona **"Delete branch"** para eliminar la rama del repositorio remoto de manera limpia.
+
+   Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](???)
+   
+
+#### Refactoring-1
+
+
 ## Workflow 4
 
-Todos los días a las XX:XX se ejecuta el job de Nightly que ...
+Este workflow (`Nightly Cross-Browser Workflow`) está diseñado para ejecutarse de forma automática todas las noches a las 2:00 (configurado mediante la expresión `cron: 0 2 * * *`). Además, incluye el desencadenador `workflow_dispatch` para permitir ejecuciones manuales desde la interfaz de GitHub.
 
-- [ÚLTIMA EJECUCIÓN](URL_ultima_ejecucion_workflow_4)
+> **Nota técnica:** Aunque el workflow está programado a las 2:00 AM (4:00 AM en horario local de España), los entornos compartidos de GitHub Actions ejecutan los eventos de tipo schedule con un margen de retraso variable condicionado por la carga global de los servidores de GitHub. Así pues, como se evidencia en el historial de ejecuciones, el pipeline completó su ejecución programada automatizada a las 8:06 AM.
+
+El flujo se divide en dos trabajos (jobs) secuenciales:
+
+1. **`cross-browser-e2e`**: Ejecuta las pruebas de sistema web utilizando una matriz de configuración de pruebas cruzadas. Para optimizar el código y evitar repeticiones se define una combinación de navegadoresy sistemas operativos donde se inyectan las variables de entorno `BROWSER` y `OS`:
+   * **Chrome:** Testeado en entornos Linux (`ubuntu-latest`), Windows (`windows-latest`) y macOS (`macos-latest`).
+   * **Firefox:** Testeado en entornos Linux (`ubuntu-latest`), Windows (`windows-latest`) y macOS (`macos-latest`).
+   * **Microsoft Edge:** Testeado en entorno Windows (`windows-latest`).
+   * **Safari:** Testeado en entorno macOS (`macos-15`).
+
+   La prueba de sistema ejecutada se centra en verificar un caso crítico de negocio: realizar una transferencia entre cuentas propias (de cuenta corriente a cuenta de ahorros), concretamente ejecutando el test `es.codeurjc.e2e.TransferE2ETest#testTransferOwnAccountsSuccess`.
+
+2. **`publish-nightly`**: 
+
+    * Este job depende estrictamente del éxito del anterior (`needs: cross-browser-e2e`), si alguna de las pruebas en la matriz falla el job se cancela de forma segura. 
+   * Genera de forma dinámica una etiqueta con la fecha actual en formato `nightly-AAAA-MM-DD`.
+   * Construye la imagen Docker (`banking-app`) omitiendo las pruebas unitarias (`-DskipTests`) mediante el plugin de Spring Boot.
+   * Se autentica en DockerHub utilizando secretos seguros del repositorio (`DOCKERHUB_USERNAME` y `DOCKERHUB_TOKEN`).
+   * Publica la imagen final etiquetada en el registro público.
+
+
+#### Enlaces
+* **Última ejecución del Workflow:** [Ejecución de Workflow 4 (Nightly)](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26353622199)
+* **Artefacto generado en DockerHub:** [marcosgrc/banking-app:nightly-2026-05-24](https://hub.docker.com/r/marcosgrc/banking-app/tags)
+
