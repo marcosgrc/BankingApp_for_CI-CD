@@ -31,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -247,6 +248,23 @@ public class AccountServiceTest {
         verify(transactionRepository)
                 .save(argThat(transaction -> "Quick deposit".equals(transaction.getDescription()) &&
                         transaction.getAmount() == 100.0));
+    }
+
+    // --- Test deposit feature-3 (usuario baneado) ---
+    @Test
+    void deposit_bannedUser_throwsException() {
+        //GIVEN
+        user.setBanned(true);
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(account));
+
+        //WHEN & THEN
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            accountService.deposit(accountNumber, amount100, "Test deposit");
+        });
+
+        assertEquals("User is banned and cannot perform account operations", ex.getMessage());
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
     }
 
     // --- Tests for getAccount(String accountNumber) and getUserAccounts(User user)
@@ -549,6 +567,23 @@ public class AccountServiceTest {
         verifyNoInteractions(smsService);
     }
 
+    // --- Test withdraw feature-3 (usuario baneado) ---
+    @Test
+    void withdraw_bannedUser_throwsException() {
+        //GIVEN
+        user.setBanned(true);
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(account));
+
+        //WHEN & THEN
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            accountService.withdraw(accountNumber, new Amount(100.0), "Compra");
+        });
+
+        assertEquals("User is banned and cannot perform account operations", ex.getMessage());
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
+    }
+    
     // --- Tests for daily withdrawal limit (5000 EUR in last 24 hours) ---
 
     @Test
@@ -727,5 +762,23 @@ public class AccountServiceTest {
         } else {
             verifyNoInteractions(emailService, smsService);
         }
+    }
+
+    // --- Test transfer feature-3 (usuario baneado) ---
+    @Test
+    void transfer_bannedOriginUser_throwsException() {
+        //GIVEN
+        user.setBanned(true);
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(account));
+        when(accountRepository.findByAccountNumber(accountNumber2.getValue())).thenReturn(Optional.of(account2));
+
+        //WHEN & THEN
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            accountService.transfer(accountNumber, accountNumber2, new Amount(100.0));
+        });
+
+        assertEquals("User is banned and cannot perform account operations", ex.getMessage());
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
     }
 }
