@@ -300,5 +300,5 @@ El flujo se divide en dos trabajos (jobs) secuenciales:
 
 #### Enlaces
 * **Última ejecución del Workflow:** [Ejecución de Workflow 4 (Nightly)](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26353622199)
-* **Artefacto generado en DockerHub:** [❗❗❗ albermg27/banking-app:nightly-2026-05-24]()
+* **Artefacto generado en DockerHub:** [marcosgrc/banking-app:nightly-2026-05-24](https://hub.docker.com/r/marcosgrc/banking-app/tags)
 
