@@ -14,6 +14,7 @@ import es.codeurjc.service.notifications.EmailNotificationService;
 import es.codeurjc.service.notifications.NotificationService;
 import es.codeurjc.service.notifications.SmsNotificationService;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,6 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -71,7 +73,7 @@ public class AccountServiceTest {
         account2.setUser(user2);
     }
 
-    // --- Tests for constructor) ---
+    // --- Tests for constructor ---
 
     @Test
     void constructor_explicitTest_shouldInitializeCorrectly() {
@@ -669,4 +671,70 @@ public class AccountServiceTest {
             verifyNoInteractions(emailService, smsService);
         }
     }
+
+    // --- Tests feature-3 (límite de edad en transferencias) ---
+
+    @Test
+    @DisplayName("Usuario de 17 años: No se realiza la transferencia")
+    void transfer_userIsUnder18_throwsException() {
+        // GIVEN: El usuario origen es menor de edad (nació hace 17 años)
+        user.setBirthdate(java.time.LocalDate.now().minusYears(17));
+        account.setUser(user);
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(account));
+        when(accountRepository.findByAccountNumber(accountNumber2.getValue())).thenReturn(Optional.of(account2));
+
+        // WHEN & THEN: Lanzar excepción al intentar transferir
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            accountService.transfer(accountNumber, accountNumber2, amount100);
+        });
+        assertEquals("Users under 18 cannot perform transfers", exception.getMessage());
+
+        // THEN: No hubo ningún cambio en las cuentas
+        verify(accountRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Usuario de 25 años: Se realiza la transferencia")
+    void transfer_userIsOver18_success() {
+        // GIVEN: El usuario origen es mayor de edad (nació hace 25 años)
+        user.setBirthdate(java.time.LocalDate.now().minusYears(25));
+        account.setUser(user);
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(account));
+        when(accountRepository.findByAccountNumber(accountNumber2.getValue())).thenReturn(Optional.of(account2));
+        when(accountRepository.save(account)).thenReturn(account);
+        when(accountRepository.save(account2)).thenReturn(account2);
+
+        // WHEN: Se realiza la transferencia
+        accountService.transfer(accountNumber, accountNumber2, amount100);
+
+        // THEN: Los saldos cambian correctamente
+        assertEquals(900.0, account.getBalance());
+        assertEquals(1100.0, account2.getBalance());
+        verify(accountRepository).save(account);
+        verify(accountRepository).save(account2);
+    }
+
+    @Test
+    @DisplayName("Usuario de 18 años: Se realiza la transferencia")
+    void transfer_userTurns18Today_success() {
+        // GIVEN: Caso límite, el usuario cumple hoy los 18 años
+        user.setBirthdate(java.time.LocalDate.now().minusYears(18));
+        account.setUser(user);
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(account));
+        when(accountRepository.findByAccountNumber(accountNumber2.getValue())).thenReturn(Optional.of(account2));
+        when(accountRepository.save(account)).thenReturn(account);
+        when(accountRepository.save(account2)).thenReturn(account2);
+
+        // WHEN: Se realiza la transferencia
+        org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> {
+            accountService.transfer(accountNumber, accountNumber2, amount100);
+        });
+
+        // THEN: Cambian los saldos y se guardan ambas cuentas
+        assertEquals(900.0, account.getBalance());
+        assertEquals(1100.0, account2.getBalance());
+        verify(accountRepository).save(account);
+        verify(accountRepository).save(account2);
+    }
+
 }
