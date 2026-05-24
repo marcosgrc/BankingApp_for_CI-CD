@@ -198,6 +198,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | feature-2 | [Nombre 3], [Nombre 4] | [Commit 3](URL_commit_3), [Commit 4](URL_commit_4) |
+| feature-3 | [Marcos], [Icíar] | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Commit 4](URL_commit_4) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ... |
 
 ### Pasos seguidos
@@ -207,10 +208,61 @@ Una vez creados los workflows y funcionando estos, pasamos a crear la nueva func
 Clonamos el repositorio
 
 ```
-$ git clone git@github.com:codigus-formacion-se/banking-app-2026.git
+$ git clone https://github.com/Albermg27/cs-2026-grupo-2
 ```
 
 > Inserta aquí todos los comandos que has utilizado para crear la rama, implementar la funcionalidad, hacer el commit y push a GitHub, crear el pull request y hacer el merge a main. Acompaña cada comando con una breve explicación de lo que has hecho.
+
+#### Feature-1
+
+#### Feature-2
+
+#### Feature-3
+Para la implementación de la funcionalidad de la **Feature-3**, que consiste en restringir las transferencias bancarias únicamente a usuarios mayores de 18 años, se siguieron los siguientes pasos y comandos de Git:
+1. **Creación y cambio a la rama de desarrollo:**
+   ```bash
+   git checkout -b feature-3
+   ```
+   * **Explicación:** Este comando crea una rama local llamada `feature-3` a partir de `main` y nos cambia automáticamente a ella para poder trabajar de manera aislada y segura en el desarrollo de la funcionalidad.
+2. **Implementación de la funcionalidad en el código:**
+   Durante esta etapa, se modificaron y adaptaron los siguientes componentes de la aplicación:
+   * **Entidad `User` (`src/main/java/es/codeurjc/model/User.java`):** Se añadió el atributo `birthdate` de tipo `LocalDate` para almacenar la fecha de nacimiento de los usuarios, junto con sus métodos *getter* y *setter* correspondientes y la actualización de los constructores necesarios.
+   * **Servicio `AccountService` (`src/main/java/es/codeurjc/service/AccountService.java`):** Dentro del método `transfer`, se introdujo una regla de negocio y comprobación que determina la edad del usuario ordenante de la transferencia. En caso de ser menor de 18 años, el sistema impide la transacción arrojando una excepción.
+   * **Inicializador `DatabaseInitializer` (`src/main/java/es/codeurjc/config/DatabaseInitializer.java`):** Se actualizó la carga inicial de datos para asignar fechas de nacimiento específicas a los usuarios de prueba predeterminados.
+3. **Añadir los cambios al área de preparación (*staging area*):**
+   ```bash
+   git add src/main/java/es/codeurjc/model/User.java src/main/java/es/codeurjc/service/AccountService.java src/main/java/es/codeurjc/config/DatabaseInitializer.java
+   ```
+   * **Explicación:** Prepara y añade los tres ficheros modificados al área de preparación de Git, indicando que formarán parte de la próxima confirmación o commit.
+4. **Guardar los cambios (Commit):**
+   ```bash
+   git commit -m "Feature 3 implementation"
+   ```
+   * **Explicación:** Consolida y guarda en el historial de confirmaciones de la rama local los cambios preparados, acompañados de un mensaje de commit.
+5. **Publicación y subida de la rama a GitHub (Push):**
+   ```bash
+   git push origin feature-3
+   ```
+   * **Explicación:** Sube la rama local `feature-3` con su nuevo commit a GitHub, permitiendo que la rama esté disponible para el resto del equipo.
+   Esto desencadena el workflow 1, su resultado es accesible en el siguiente link: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26358163241)
+
+6. **Implementación y subida de los tests de la Feature 3:**
+
+7. **Creación del Pull Request (Plantilla / Proceso a seguir):**
+   Al acceder al repositorio en GitHub, aparecerá un banner sugiriendo crear un Pull Request desde la rama `feature-3` recién subida hacia la rama principal `main`. Se hace clic en **"Compare & pull request"**, se describe el trabajo realizado y se pulsa en **"Create pull request"**.
+
+   Esto desencadena el Workflow 2, su resultado es accesible en el siguiente link: [Resultado Workflow 2](???)
+
+8. **Fusión (Merge) a la rama principal `main` (Plantilla / Proceso a seguir):**
+   Una vez que se hayan integrado las pruebas unitarias y E2E, y que el pipeline de integración continua (GitHub Actions) marque en verde, se procede a fusionar los cambios:
+   
+   Se accede al Pull Request aprobado y se hace clic en el botón verde **"Merge pull request"**, se confirma la acción mediante **"Confirm merge"** y posteriormente se selecciona **"Delete branch"** para eliminar la rama del repositorio remoto de manera limpia.
+
+   Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](???)
+   
+
+#### Refactoring-1
+
 
 ## Workflow 4
 
