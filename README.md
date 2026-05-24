@@ -179,13 +179,13 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 
 
 ### Captura de la aplicación desplegada en Azure
-> Inserta aquí una captura dela aplicación desplegada. Debe aparecer la URL de la aplicación desplegada y el número de versión desplegada (pantalla de login)
+> Inserta aquí una captura de la aplicación desplegada. Debe aparecer la URL de la aplicación desplegada y el número de versión desplegada (pantalla de login)
 
 ![Captura Aplicación en Azure](URL_captura_dashboard_azure)
 
 
 ### Captura del dashboard de Azure con la última versión desplegada
-> Inserta aquí una captura del dashboard de Azure. La captura debe mostrar lo mismo que aparece en la diapositiva 26 de "Anexo -Despliegue de aplicaciones en Azure"
+![Captura de la aplicación desplegada en Azure](img/DashboardAzure_LastDesploy.png)
 
 
 ## Desarrollo con GitHubFlow
@@ -194,8 +194,12 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 
 | Tarea | Alumno/es asignado/s | Commits asociado |
 |:--- |:--- |:--- | 
+| Workflow 1 | Marcos | [Implementación Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
+| Workflow 2 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
+| Workflow 3 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
+| Workflows extra: deploy and delete azure app | Marcos | [Implementación Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | feature-2 | Adrián y Jorge | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/c87e795b2f5040366e2394f090eb6bfc00d303de), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/bbad60287f83fc0fbda0db9490fd4ae5a335843f) |
 | feature-3 | Marcos e Icíar | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/d6319441355c84fbec3fe50528b8e39cabc24ccd) |
@@ -316,18 +320,23 @@ Para la implementación de la funcionalidad de la **Feature-3**, que consiste en
     * **Usuario mayor de edad (25 años):** Se valida que se realiza la transacción correctamente, verificando matemáticamente que los saldos se actualizan de manera correcta tras la transferencia (reducción en origen e incremento en destino) y se comprueba que ambas cuentas se guardan con éxito en el repositorio.
     * **Caso límite frontera (18 años cumplidos hoy):** Se comprueba que un usuario que cumple exactamente hoy los 18 años puede realizar la operación sin lanzar excepciones (`assertDoesNotThrow`), garantizando que la condición lógica incluye correctamente el día exacto del cumpleaños del usuario.
 
-7. **Creación del Pull Request (Plantilla / Proceso a seguir):**
+7. **Creación del Pull Request:**
    Al acceder al repositorio en GitHub, aparecerá un banner sugiriendo crear un Pull Request desde la rama `feature-3` recién subida hacia la rama principal `main`. Se hace clic en **"Compare & pull request"**, se describe el trabajo realizado y se pulsa en **"Create pull request"**.
 
-   Esto desencadena el Workflow 2, su resultado es accesible en el siguiente link: [Resultado Workflow 2](???)
+   Esto desencadena el Workflow 2, su resultado es accesible en el siguiente link: [Resultado Workflow 2](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26373965873)
 
-8. **Fusión (Merge) a la rama principal `main` (Plantilla / Proceso a seguir):**
-   Una vez que se hayan integrado las pruebas unitarias y E2E, y que el pipeline de integración continua (GitHub Actions) marque en verde, se procede a fusionar los cambios:
+8. **Fusión (Merge) a la rama principal `main`**:
+   Una vez que se hayan ejecutado las pruebas unitarias y E2E, y que el pipeline de integración continua (GitHub Actions) marque en verde, se procede a fusionar los cambios, teniendo previamente desplegada la aplicación en el servidor de Azure:
    
-   Se accede al Pull Request aprobado y se hace clic en el botón verde **"Merge pull request"**, se confirma la acción mediante **"Confirm merge"** y posteriormente se selecciona **"Delete branch"** para eliminar la rama del repositorio remoto de manera limpia.
+   Se accede al Pull Request aprobado y se hace clic en el botón verde **"Merge pull request"** y se confirma la acción mediante **"Confirm merge"**.
 
-   Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](???)
-   
+   Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26374113718/job/77631387307)
+
+   Este workflow crea una imagen que se sube a Docker Hub y se despliega en Azure. El link a la imagen en Docker Hub es el siguiente: [URL Docker Hub](https://hub.docker.com/layers/marcosgrc/banking-app-production/1.3.0/images/sha256-51ddb8e5a3ccb38d7f70ead5bbf10b0fb01af96917b2733975ae8bc6e6e774b2) 
+
+   Y aqui encontramos la captura de la aplicación desplegada en Azure, donde podemos ver la etiqueta de la versión correspondiente, en este caso la 1.3.0:
+   ![Captura de la aplicación desplegada en Azure](img/DespliegueAzure_1-3-0.png)
+
 
 #### Refactoring-1
 
