@@ -28,5 +28,41 @@ jobs:
       - name: Run unit tests
         run: mvn test -P unit-tests
 
-      - name: Run system tests
-        run: xvfb-run -a mvn test -Dtest='es.codeurjc.e2e.*Test'
+      - name: Run Transfer E2E tests
+        run: xvfb-run -a mvn test -Dtest='es.codeurjc.e2e.TransferE2ETest'
+
+      - name: Read version from pom.xml
+        id: project
+        run: echo "tag=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)" >> $GITHUB_OUTPUT
+
+      - name: Package application
+        run: mvn package -DskipTests
+
+      - name: Start application on port 8080
+        run: |
+          java -jar target/banking-app-${{ steps.project.outputs.tag }}.jar &
+          echo $! > app.pid
+
+      - name: Wait for application
+        run: |
+          for i in $(seq 1 30); do
+            if curl -sf http://localhost:8080/login > /dev/null; then
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "Application did not start on port 8080"
+          exit 1
+
+      - name: Run SmokeTest
+        run: |
+          xvfb-run -a mvn test -Dtest='es.codeurjc.e2e.SmokeTest' \
+            -DAPP_URL=http://localhost:8080 \
+            -DAPP_VERSION=${{ steps.project.outputs.tag }}
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi
