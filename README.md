@@ -198,7 +198,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | feature-2 | [Nombre 3], [Nombre 4] | [Commit 3](URL_commit_3), [Commit 4](URL_commit_4) |
-| feature-3 | [Marcos], [Icíar] | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Commit 4](URL_commit_4) |
+| feature-3 | Marcos e Icíar | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/d6319441355c84fbec3fe50528b8e39cabc24ccd) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ... |
 
 ### Pasos seguidos
@@ -247,6 +247,15 @@ Para la implementación de la funcionalidad de la **Feature-3**, que consiste en
    Esto desencadena el workflow 1, su resultado es accesible en el siguiente link: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26358163241)
 
 6. **Implementación y subida de los tests de la Feature 3:**
+
+    Tras implementar la lógica de negocio, se diseñaron y ejecutaron las pruebas unitarias en el fichero `src/test/java/es/codeurjc/unit/AccountServiceTest.java` para asegurar la robustez de la restricción por edad.
+    
+    Se utilizaron las anotaciones `@Test` y `@DisplayName` de JUnit 5 para describir de forma clara cada escenario de prueba ejecutado.
+
+    Los escenarios de prueba incluidos fueron los siguientes:
+    * **Usuario menor de edad (17 años):** Se comprueba que el método `transfer` lanza una excepción del tipo `IllegalArgumentException` con el mensaje exacto `"Users under 18 cannot perform transfers"` y se verifica mediante `verify(..., never()).save(any())` que el sistema bloquea la transacción sin persistir ningún cambio en la base de datos.
+    * **Usuario mayor de edad (25 años):** Se valida que se realiza la transacción correctamente, verificando matemáticamente que los saldos se actualizan de manera correcta tras la transferencia (reducción en origen e incremento en destino) y se comprueba que ambas cuentas se guardan con éxito en el repositorio.
+    * **Caso límite frontera (18 años cumplidos hoy):** Se comprueba que un usuario que cumple exactamente hoy los 18 años puede realizar la operación sin lanzar excepciones (`assertDoesNotThrow`), garantizando que la condición lógica incluye correctamente el día exacto del cumpleaños del usuario.
 
 7. **Creación del Pull Request (Plantilla / Proceso a seguir):**
    Al acceder al repositorio en GitHub, aparecerá un banner sugiriendo crear un Pull Request desde la rama `feature-3` recién subida hacia la rama principal `main`. Se hace clic en **"Compare & pull request"**, se describe el trabajo realizado y se pulsa en **"Create pull request"**.
