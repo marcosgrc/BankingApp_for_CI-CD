@@ -576,10 +576,14 @@ public class AccountServiceTest {
 
         //WHEN & THEN
         IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
-            accountService.withdraw(accountNumber, amount100, "Compra");
+            accountService.withdraw(accountNumber, new Amount(100.0), "Compra");
         });
 
         assertEquals("User is banned and cannot perform account operations", ex.getMessage());
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
+    }
+    
     // --- Tests for daily withdrawal limit (5000 EUR in last 24 hours) ---
 
     @Test
