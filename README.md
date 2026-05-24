@@ -193,7 +193,9 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 ### Asignación de tareas
 
 | Tarea | Alumno/es asignado/s | Commits asociado |
-|:--- |:--- |:--- |
+|:--- |:--- |:--- | 
+| Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6)|
+| Documentación Workflow 4 | Alberto e Icíar | 
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | feature-2 | [Nombre 3], [Nombre 4] | [Commit 3](URL_commit_3), [Commit 4](URL_commit_4) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ... |
@@ -212,6 +214,28 @@ $ git clone git@github.com:codigus-formacion-se/banking-app-2026.git
 
 ## Workflow 4
 
-Todos los días a las XX:XX se ejecuta el job de Nightly que ...
+Este workflow (`Nightly Cross-Browser Workflow`) está diseñado para ejecutarse de forma automática todas las noches a las 2:00 (configurado mediante la expresión `cron: 0 2 * * *`). Además, incluye el desencadenador `workflow_dispatch` para permitir ejecuciones manuales desde la interfaz de GitHub.
 
-- [ÚLTIMA EJECUCIÓN](URL_ultima_ejecucion_workflow_4)
+El flujo se divide en dos trabajos (jobs) secuenciales:
+
+1. **`cross-browser-e2e`**: Ejecuta las pruebas de sistema web utilizando una matriz de configuración de pruebas cruzadas. Para optimizar el código y evitar repeticiones se define una combinación de navegadoresy sistemas operativos donde se inyectan las variables de entorno `BROWSER` y `OS`:
+   * **Chrome:** Testeado en entornos Linux (`ubuntu-latest`), Windows (`windows-latest`) y macOS (`macos-latest`).
+   * **Firefox:** Testeado en entornos Linux (`ubuntu-latest`), Windows (`windows-latest`) y macOS (`macos-latest`).
+   * **Microsoft Edge:** Testeado en entorno Windows (`windows-latest`).
+   * **Safari:** Testeado en entorno macOS (`macos-15`).
+
+   La prueba de sistema ejecutada se centra en verificar un caso crítico de negocio: realizar una transferencia entre cuentas propias (de cuenta corriente a cuenta de ahorros), concretamente ejecutando el test `es.codeurjc.e2e.TransferE2ETest#testTransferOwnAccountsSuccess`.
+
+2. **`publish-nightly`**: 
+
+    * Este job depende estrictamente del éxito del anterior (`needs: cross-browser-e2e`), si alguna de las pruebas en la matriz falla, este job se cancela de forma segura. 
+   * Genera de forma dinámica una etiqueta con la fecha actual en formato `nightly-AAAA-MM-DD`.
+   * Construye la imagen Docker (`banking-app`) omitiendo las pruebas unitarias (`-DskipTests`) mediante el plugin de Spring Boot.
+   * Se autentica en DockerHub utilizando secretos seguros del repositorio (`DOCKERHUB_USERNAME` y `DOCKERHUB_TOKEN`).
+   * Publica la imagen final etiquetada en el registro público.
+
+
+#### Enlaces
+* **Última ejecución del Workflow:** [Ejecución de Workflow 4 (Nightly)](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26353622199)
+* **Artefacto generado en DockerHub:** [banking-app:nightly-2026-05-24]()
+
