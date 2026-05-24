@@ -35,6 +35,7 @@ public class User {
     private String email;
     private String phone;
     private LocalDate registrationDate;
+    private LocalDate birthdate;
     private double monthlyIncome;
     
     @Enumerated(EnumType.STRING)
@@ -150,6 +151,14 @@ public class User {
     
     public void setRegistrationDate(LocalDate registrationDate) {
         this.registrationDate = registrationDate;
+    }
+    
+    public LocalDate getBirthdate() {
+        return birthdate;
+    }
+    
+    public void setBirthdate(LocalDate birthdate) {
+        this.birthdate = birthdate;
     }
     
     public double getMonthlyIncome() {

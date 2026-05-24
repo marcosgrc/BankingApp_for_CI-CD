@@ -147,6 +147,13 @@ public class AccountService {
             throw new IllegalArgumentException("Cannot transfer to same account");
         }
 
+        if (fromAccount.getUser() != null && fromAccount.getUser().getBirthdate() != null) {
+            int age = java.time.Period.between(fromAccount.getUser().getBirthdate(), java.time.LocalDate.now()).getYears();
+            if (age < 18) {
+                throw new IllegalArgumentException("Users under 18 cannot perform transfers");
+            }
+        }
+
         performFinancialTransfer(fromAccount, toAccount, amount);
         recordTransferTransactions(fromAccount, toAccount, amount);
         sendTransferNotifications(fromAccount, toAccount, amount);
