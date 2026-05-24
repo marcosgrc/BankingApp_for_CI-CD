@@ -21,6 +21,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -546,6 +547,64 @@ public class AccountServiceTest {
         verify(transactionRepository).save(any(Transaction.class));
         verifyNoInteractions(emailService);
         verifyNoInteractions(smsService);
+    }
+
+    // --- Tests for daily withdrawal limit (5000 EUR in last 24 hours) ---
+
+    @Test
+    void withdraw_exceedsDailyLimitWhenRecentWithdrawalsSumOver5000_throwsException() {
+        Account highBalanceAccount = new Account(accountNumber.getValue(), Account.AccountType.CHECKING, 20000.0);
+        highBalanceAccount.setUser(user);
+        addWithdrawalToAccount(highBalanceAccount, 4000.0, LocalDateTime.now().minusHours(2));
+
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(highBalanceAccount));
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            accountService.withdraw(accountNumber, new Amount(1500.0), "Compra");
+        });
+
+        assertEquals("Daily withdrawal limit of 5000 exceeded", exception.getMessage());
+        assertEquals(20000.0, highBalanceAccount.getBalance());
+        verify(accountRepository, never()).save(any());
+        verify(transactionRepository, never()).save(any());
+    }
+
+    @Test
+    void withdraw_cumulativeWithdrawalsWithin24hReachExactly5000_success() {
+        Account highBalanceAccount = new Account(accountNumber.getValue(), Account.AccountType.CHECKING, 20000.0);
+        highBalanceAccount.setUser(user);
+        addWithdrawalToAccount(highBalanceAccount, 4000.0, LocalDateTime.now().minusHours(1));
+
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(highBalanceAccount));
+        when(accountRepository.save(any(Account.class))).thenReturn(highBalanceAccount);
+
+        Account result = accountService.withdraw(accountNumber, new Amount(1000.0), "Compra");
+
+        assertEquals(19000.0, result.getBalance());
+        verify(transactionRepository).save(any(Transaction.class));
+        verify(accountRepository).save(highBalanceAccount);
+    }
+
+    @Test
+    void withdraw_withdrawalsOlderThan24hNotCountedTowardsDailyLimit_success() {
+        Account highBalanceAccount = new Account(accountNumber.getValue(), Account.AccountType.CHECKING, 20000.0);
+        highBalanceAccount.setUser(user);
+        addWithdrawalToAccount(highBalanceAccount, 4000.0, LocalDateTime.now().minusHours(25));
+
+        when(accountRepository.findByAccountNumber(accountNumber.getValue())).thenReturn(Optional.of(highBalanceAccount));
+        when(accountRepository.save(any(Account.class))).thenReturn(highBalanceAccount);
+
+        Account result = accountService.withdraw(accountNumber, new Amount(4500.0), "Compra");
+
+        assertEquals(15500.0, result.getBalance());
+        verify(transactionRepository).save(any(Transaction.class));
+    }
+
+    private void addWithdrawalToAccount(Account targetAccount, double amount, LocalDateTime timestamp) {
+        Transaction previousWithdrawal = new Transaction(
+                targetAccount, Transaction.TransactionType.WITHDRAWAL, amount, "Previous withdrawal");
+        previousWithdrawal.setTimestamp(timestamp);
+        targetAccount.getTransactions().add(previousWithdrawal);
     }
 
     // --- Tests for transfer(String fromAccountNumber, String toAccountNumber,
