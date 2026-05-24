@@ -194,8 +194,8 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 
 | Tarea | Alumno/es asignado/s | Commits asociado |
 |:--- |:--- |:--- | 
-| Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6)|
-| Documentación Workflow 4 | Alberto e Icíar | 
+| Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
+| Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | feature-2 | [Nombre 3], [Nombre 4] | [Commit 3](URL_commit_3), [Commit 4](URL_commit_4) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ... |
@@ -216,6 +216,8 @@ $ git clone git@github.com:codigus-formacion-se/banking-app-2026.git
 
 Este workflow (`Nightly Cross-Browser Workflow`) está diseñado para ejecutarse de forma automática todas las noches a las 2:00 (configurado mediante la expresión `cron: 0 2 * * *`). Además, incluye el desencadenador `workflow_dispatch` para permitir ejecuciones manuales desde la interfaz de GitHub.
 
+> **Nota técnica:** Aunque el workflow está programado a las 2:00 AM (4:00 AM en horario local de España), los entornos compartidos de GitHub Actions ejecutan los eventos de tipo schedule con un margen de retraso variable condicionado por la carga global de los servidores de GitHub. Así pues, como se evidencia en el historial de ejecuciones, el pipeline completó su ejecución programada automatizada a las 8:06 AM.
+
 El flujo se divide en dos trabajos (jobs) secuenciales:
 
 1. **`cross-browser-e2e`**: Ejecuta las pruebas de sistema web utilizando una matriz de configuración de pruebas cruzadas. Para optimizar el código y evitar repeticiones se define una combinación de navegadoresy sistemas operativos donde se inyectan las variables de entorno `BROWSER` y `OS`:
@@ -228,7 +230,7 @@ El flujo se divide en dos trabajos (jobs) secuenciales:
 
 2. **`publish-nightly`**: 
 
-    * Este job depende estrictamente del éxito del anterior (`needs: cross-browser-e2e`), si alguna de las pruebas en la matriz falla, este job se cancela de forma segura. 
+    * Este job depende estrictamente del éxito del anterior (`needs: cross-browser-e2e`), si alguna de las pruebas en la matriz falla el job se cancela de forma segura. 
    * Genera de forma dinámica una etiqueta con la fecha actual en formato `nightly-AAAA-MM-DD`.
    * Construye la imagen Docker (`banking-app`) omitiendo las pruebas unitarias (`-DskipTests`) mediante el plugin de Spring Boot.
    * Se autentica en DockerHub utilizando secretos seguros del repositorio (`DOCKERHUB_USERNAME` y `DOCKERHUB_TOKEN`).
@@ -237,5 +239,5 @@ El flujo se divide en dos trabajos (jobs) secuenciales:
 
 #### Enlaces
 * **Última ejecución del Workflow:** [Ejecución de Workflow 4 (Nightly)](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26353622199)
-* **Artefacto generado en DockerHub:** [banking-app:nightly-2026-05-24]()
+* **Artefacto generado en DockerHub:** [❗❗❗ albermg27/banking-app:nightly-2026-05-24]()
 
