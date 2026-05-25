@@ -39,7 +39,7 @@ public class LoanController {
             User user = userService.getUserByUsername(username);
             model.addAttribute("user", user);
             return "loan-request";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
@@ -57,7 +57,7 @@ public class LoanController {
             redirectAttributes.addFlashAttribute("success",
                     "Loan request submitted successfully");
             return "redirect:/dashboard";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/loan/request";
         }
@@ -69,7 +69,7 @@ public class LoanController {
             List<Loan> pendingLoans = loanService.getPendingLoans();
             model.addAttribute("loans", pendingLoans);
             return "loan-manage";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
@@ -81,7 +81,7 @@ public class LoanController {
             Loan loan = loanService.getLoan(id);
             model.addAttribute("loan", loan);
             return "loan-details";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
@@ -94,7 +94,7 @@ public class LoanController {
             loanService.approveLoan(loanId);
             redirectAttributes.addFlashAttribute("success", "Loan approved");
             return "redirect:/loan/manage";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/loan/manage";
         }
@@ -108,7 +108,7 @@ public class LoanController {
             loanService.rejectLoan(loanId, reason);
             redirectAttributes.addFlashAttribute("success", "Loan rejected");
             return "redirect:/loan/manage";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/loan/manage";
         }

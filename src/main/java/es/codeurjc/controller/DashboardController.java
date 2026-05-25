@@ -49,7 +49,7 @@ public class DashboardController {
             model.addAttribute("loans", loans);
             
             return "dashboard";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
@@ -70,7 +70,7 @@ public class DashboardController {
             model.addAttribute("transactions", transactions);
             
             return "transactions";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }

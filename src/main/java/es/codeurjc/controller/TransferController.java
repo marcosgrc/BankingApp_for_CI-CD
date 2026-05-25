@@ -43,7 +43,7 @@ public class TransferController {
             model.addAttribute("accounts", accounts);
             
             return "transfer";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());
             return "error";
         }
@@ -60,7 +60,7 @@ public class TransferController {
             redirectAttributes.addFlashAttribute("success", 
                 "Transfer completed successfully");
             return "redirect:/dashboard";
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
             return "redirect:/transfer";
         }
