@@ -31,7 +31,7 @@ public class UserModelAttributes {
 
         try {
             user = userService.getUserByUsername(username);
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
             return "";
         }
         return user.getFullName();
