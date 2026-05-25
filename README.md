@@ -194,7 +194,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Tarea | Alumno/es asignado/s | Commits asociado |
 |:--- |:--- |:--- | 
 | Workflow 1 | Marcos | [Implementación Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
-| Workflow 2 | Laura y Jorge | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
+| Workflow 2 | Laura y Jorge | [Added workflow2](https://github.com/Albermg27/cs-2026-grupo-2/commit/53683c3f13edf30208b6af6296659c6ad80d44fc) |
 | Workflow 3 | Adrián y Naroa | [Implementación workflow 3 (Adrián y Naroa)](https://github.com/Albermg27/cs-2026-grupo-2/commit/780a3df4955f3c46c079ccac9d3eac61ca11728c), [Implementación SmokeTest](https://github.com/Albermg27/cs-2026-grupo-2/commit/bb946564ff854ce6a322032129fdfa96c5645a18#diff-7fd5462a84a1972e20eb2b6a271e524f2cfc098beb8d6f4f979065a4f6dacb56) |
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
@@ -213,8 +213,6 @@ Clonamos el repositorio
 ```
 $ git clone https://github.com/Albermg27/cs-2026-grupo-2
 ```
-
-> Inserta aquí todos los comandos que has utilizado para crear la rama, implementar la funcionalidad, hacer el commit y push a GitHub, crear el pull request y hacer el merge a main. Acompaña cada comando con una breve explicación de lo que has hecho.
 
 #### Feature-1
 Para la implementación de la **Feature-1**, cuya funcionalidad consiste en limitar las retiradas de dinero de una cuenta comprobando que la cantidad solicitada sumada al total retirado en las últimas 24 horas no supere los 5000 EUR, se siguieron los siguientes pasos y comandos de Git.
