@@ -195,7 +195,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 |:--- |:--- |:--- | 
 | Workflow 1 | Marcos | [Implementación Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
 | Workflow 2 | Laura y Jorge | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
-| Workflow 3 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
+| Workflow 3 | Adrián y Naroa | [Implementación workflow 3 (Adrián y Naroa)](https://github.com/Albermg27/cs-2026-grupo-2/commit/780a3df4955f3c46c079ccac9d3eac61ca11728c), [Implementación SmokeTest](https://github.com/Albermg27/cs-2026-grupo-2/commit/bb946564ff854ce6a322032129fdfa96c5645a18#diff-7fd5462a84a1972e20eb2b6a271e524f2cfc098beb8d6f4f979065a4f6dacb56) |
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | Workflows extra: deploy and delete azure app | Marcos | [Workflows create and delete azure app](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
