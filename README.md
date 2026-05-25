@@ -200,7 +200,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | Workflows extra: deploy and delete azure app | Marcos | [Workflows create and delete azure app](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
-| feature-1 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
+| feature-1 | Naroa y Alberto | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/502f6f7402ca7c7538c5b0793a18b4786e9e34a2), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/5b22dc540a542934ae247be11e41bb1bd59b1a80) |
 | feature-2 | Adrián y Jorge | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/c87e795b2f5040366e2394f090eb6bfc00d303de), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/bbad60287f83fc0fbda0db9490fd4ae5a335843f) |
 | feature-3 | Marcos e Icíar | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/d6319441355c84fbec3fe50528b8e39cabc24ccd) |
 | refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ...
@@ -218,7 +218,91 @@ $ git clone https://github.com/Albermg27/cs-2026-grupo-2
 > Inserta aquí todos los comandos que has utilizado para crear la rama, implementar la funcionalidad, hacer el commit y push a GitHub, crear el pull request y hacer el merge a main. Acompaña cada comando con una breve explicación de lo que has hecho.
 
 #### Feature-1
+Para la implementación de la **Feature-1**, cuya funcionalidad consiste en limitar las retiradas de dinero de una cuenta comprobando que la cantidad solicitada sumada al total retirado en las últimas 24 horas no supere los 5000 EUR, se siguieron los siguientes pasos y comandos de Git.
 
+1. **Creación y cambio a la rama de desarrollo:**
+   ```bash
+   git checkout -b feature-1
+   ```
+   * **Explicación:** Este comando crea una rama local llamada `feature-1` a partir de `main` y nos cambia automáticamente a ella para poder trabajar de manera aislada y segura en el desarrollo de la funcionalidad.
+
+2. **Implementación de la funcionalidad en el código:**
+   Durante esta etapa se modificó la entidad `Account` (`src/main/java/es/codeurjc/model/Account.java`). Dentro del método `withdraw`, se añadió una regla de negocio que calcula el importe total de las transacciones de tipo `WITHDRAWAL` realizadas en las últimas 24 horas. Si la suma de esas retiradas más la cantidad solicitada supera los 5000 EUR, el sistema impide la operación lanzando una excepción del tipo `IllegalArgumentException` con el mensaje `"Daily withdrawal limit of 5000 exceeded"`.
+
+3. **Añadir los cambios al área de preparación (*staging area*):**
+   ```bash
+   git add src/main/java/es/codeurjc/model/Account.java
+   ```
+   * **Explicación:** Prepara y añade el fichero modificado al área de preparación de Git, indicando que formará parte de la próxima confirmación o commit.
+
+4. **Guardar los cambios (Commit):**
+   ```bash
+   git commit -m "feat: add 24h withdrawal limit of 5000"
+   ```
+   * **Explicación:** Consolida y guarda en el historial de confirmaciones de la rama local los cambios preparados, acompañados de un mensaje de commit.
+
+5. **Publicación y subida de la rama a GitHub (Push):**
+   ```bash
+   git push origin feature-1
+   ```
+   * **Explicación:** Sube la rama local `feature-1` con su nuevo commit a GitHub, permitiendo que la rama esté disponible para el resto del equipo.
+   Esto desencadena el workflow 1, su resultado es accesible en el siguiente link: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26338985763)
+
+6. **Implementación de los tests unitarios de la Feature 1:**
+   Durante esta etapa se modificó el fichero `src/test/java/es/codeurjc/unit/AccountServiceTest.java` para añadir pruebas que verifican el correcto funcionamiento del límite diario de retiradas. Además, se actualizó la versión del proyecto en `pom.xml` de `1.0.0` a `1.1.0`, coherente con la nueva funcionalidad desplegada.
+
+   Los escenarios de prueba incluidos fueron los siguientes:
+   * **Superación del límite diario:** Se simula una cuenta con un retiro previo de 4000 EUR hace 2 horas y se intenta retirar 1500 EUR adicionales. Se comprueba que el método `withdraw` lanza una excepción con el mensaje `"Daily withdrawal limit of 5000 exceeded"` y que no se persiste ninguna transacción ni se guarda la cuenta.
+   * **Límite diario alcanzado exactamente:** Se simula un retiro previo de 4000 EUR hace 1 hora y una nueva retirada de 1000 EUR. Se valida que la operación se completa correctamente y que el saldo queda en 19000 EUR.
+   * **Retiros anteriores a 24 horas no computan:** Se simula un retiro previo de 4000 EUR hace 25 horas y una nueva retirada de 4500 EUR. Se comprueba que la operación se permite al no contabilizarse el retiro antiguo dentro de la ventana de 24 horas.
+
+7. **Añadir los cambios al área de preparación (*staging area*):**
+   ```bash
+   git add src/test/java/es/codeurjc/unit/AccountServiceTest.java pom.xml
+   ```
+   * **Explicación:** Este comando añade al área de preparación los ficheros modificados con los tests unitarios y la actualización de versión.
+
+8. **Guardar los cambios (Commit):**
+   ```bash
+   git commit -m "Feature-1 Tests"
+   ```
+   * **Explicación:** Este comando crea un commit con las pruebas unitarias añadidas para cubrir la nueva funcionalidad.
+
+9. **Publicación y subida de la rama a GitHub (Push):**
+   ```bash
+   git push origin feature-1
+   ```
+   * **Explicación:** Este comando sube la rama `feature-1` al repositorio remoto para poder abrir el Pull Request correspondiente.
+   Esto desencadena el workflow 1, su resultado es accesible en el siguiente link: [Resultado Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26360377869)
+
+10. **Creación del Pull Request:**
+    Al acceder al repositorio en GitHub, aparece un banner sugiriendo crear un Pull Request desde la rama `feature-1` hacia la rama principal `main`. Se hace clic en **"Compare & pull request"**, se describe el trabajo realizado y se pulsa en **"Create pull request"**.
+
+    La primera ejecución del **Workflow 2** falló al no encontrar los tests de la feature en el pipeline. Para corregirlo, se ajustó la configuración de `.github/workflows/workflow2.yml` para incluir los nuevos escenarios de prueba y se creó un commit adicional:
+
+    ```bash
+    git add .github/workflows/workflow2.yml
+    git commit -m "Feature-1 Tests Fixed"
+    git push origin feature-1
+    ```
+
+    * **Explicación:** Estos comandos añaden la corrección del workflow al área de preparación, crean un nuevo commit con los ajustes necesarios y actualizan automáticamente el Pull Request remoto en GitHub.
+
+    Tras la corrección, el **Workflow 2** finalizó correctamente. Su resultado es accesible en el siguiente enlace: [Resultado Workflow 2](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26360946877?pr=2)
+
+    (La ejecución previa del Workflow 2, antes de la corrección, puede consultarse aquí: [Resultado Workflow 2 (fallido)](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26360716865?pr=2))
+
+11. **Fusión (Merge) a la rama principal `main`:**
+    Una vez que se hayan integrado las pruebas unitarias y E2E, y que el pipeline de integración continua (GitHub Actions) marque en verde, se procede a fusionar los cambios:
+
+    Se accede al Pull Request y se hace clic en el botón verde **"Merge pull request"**, se confirma la acción mediante **"Confirm merge"** y posteriormente se selecciona **"Delete branch"** para eliminar la rama del repositorio remoto de manera limpia.
+
+    Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26360996058/job/77596922832)
+
+    Durante este workflow se construyó y publicó la imagen Docker de la aplicación, pudiendo ser consultada en el siguiente enlace: [marcosgrc/banking-app-production:1.1.0](https://hub.docker.com/r/marcosgrc/banking-app-production/tags?name=1.1.0)
+
+    Además, una vez completado el despliegue, Azure genera una URL pública desde la que puede accederse a la aplicación desplegada:
+    ![Aplicación desplegada v1.1.0](![alt text](image.png))
 
 
 #### Feature-2
