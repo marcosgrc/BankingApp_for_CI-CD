@@ -179,9 +179,8 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 
 
 ### Captura de la aplicación desplegada en Azure
-> Inserta aquí una captura de la aplicación desplegada. Debe aparecer la URL de la aplicación desplegada y el número de versión desplegada (pantalla de login)
 
-![Captura Aplicación en Azure](URL_captura_dashboard_azure)
+![Captura Aplicación en Azure](img/DespliegueAzure_1-3-1.png)
 
 
 ### Captura del dashboard de Azure con la última versión desplegada
@@ -195,7 +194,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Tarea | Alumno/es asignado/s | Commits asociado |
 |:--- |:--- |:--- | 
 | Workflow 1 | Marcos | [Implementación Workflow 1](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
-| Workflow 2 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
+| Workflow 2 | Laura y Jorge | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | Workflow 3 | [Nombre 1], [Nombre 2] | [Commit 1](URL_commit_1), [Commit 2](URL_commit_2) |
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
 | Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
@@ -203,7 +202,7 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | feature-1 | Naroa y Alberto | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/502f6f7402ca7c7538c5b0793a18b4786e9e34a2), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/5b22dc540a542934ae247be11e41bb1bd59b1a80) |
 | feature-2 | Adrián y Jorge | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/c87e795b2f5040366e2394f090eb6bfc00d303de), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/bbad60287f83fc0fbda0db9490fd4ae5a335843f) |
 | feature-3 | Marcos e Icíar | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/850fa5dd031cda24d344c9bbc397bbae7f460036), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/d6319441355c84fbec3fe50528b8e39cabc24ccd) |
-| refactoring-1 | [Nombre 5] | [Commit 5](URL_commit_5) ...
+| refactoring | Laura Pineda Ballesteros | [Generic Exception Catching](https://github.com/Albermg27/cs-2026-grupo-2/commit/ead0ded), [Loan approval algorithm](https://github.com/Albermg27/cs-2026-grupo-2/commit/4995012), [Versión 1.3.1](https://github.com/Albermg27/cs-2026-grupo-2/commit/8a5cb6d) |
 
 ### Pasos seguidos
 
@@ -422,7 +421,87 @@ Para la implementación de la funcionalidad de la **Feature-3**, que consiste en
    ![Captura de la aplicación desplegada en Azure](img/DespliegueAzure_1-3-0.png)
 
 
-#### Refactoring-1
+#### Refactoring
+
+Para la rama de **refactoring**, se corrigieron dos code smells pendientes detectados en la parte de préstamos y controladores de la aplicación. Al tratarse de refactorizaciones sin nueva funcionalidad, se incrementó únicamente la versión patch, pasando de `1.3.0` a `1.3.1`.
+
+Los code smells corregidos fueron:
+
+* **Generic Exception Catching:** se sustituyeron capturas genéricas de `Exception` por `IllegalArgumentException` en los controladores y en `UserModelAttributes`. Con esto se evita ocultar errores inesperados y se mantiene el tratamiento de errores de negocio esperado por la aplicación.
+* **Temporary Stub / Incomplete Business Logic:** se reemplazó el algoritmo fijo de aprobación de préstamos, que aprobaba cualquier solicitud, por una evaluación basada en importe solicitado, plazo, capacidad de pago, tipo de interés y cuota mensual.
+
+Los pasos seguidos fueron:
+
+1. **Creación de la rama de refactorización:**
+   ```bash
+   git switch main
+   git pull origin main
+   git switch -c refactoring
+   ```
+   * **Explicación:** Se actualiza la rama principal y se crea una rama independiente llamada `refactoring` para trabajar siguiendo GitHubFlow sin modificar directamente `main`.
+
+2. **Corrección del code smell Generic Exception Catching:**
+   Se modificaron los ficheros `DashboardController.java`, `LoanController.java`, `TransferController.java` y `UserModelAttributes.java`, sustituyendo capturas demasiado genéricas por excepciones de negocio más concretas.
+
+   ```bash
+   git add src/main/java/es/codeurjc/config/UserModelAttributes.java src/main/java/es/codeurjc/controller/DashboardController.java src/main/java/es/codeurjc/controller/LoanController.java src/main/java/es/codeurjc/controller/TransferController.java
+   git commit -m "refactor: specify exception type in catch blocks across controllers"
+   ```
+   * **Explicación:** Se guarda el primer code smell corregido en un commit independiente, como exige la práctica.
+   * **Commit:** [ead0ded](https://github.com/Albermg27/cs-2026-grupo-2/commit/ead0ded)
+
+3. **Corrección del code smell Temporary Stub / Incomplete Business Logic:**
+   Se modificó `LoanApprovalAlgorithm.java` para eliminar el retorno fijo de aprobación. El algoritmo ahora calcula si el préstamo debe aprobarse o rechazarse y completa los datos del resultado de evaluación.
+
+   ```bash
+   git add src/main/java/es/codeurjc/service/loan/LoanApprovalAlgorithm.java
+   git commit -m "refactor: loan approval algorithm"
+   ```
+   * **Explicación:** Se guarda el segundo code smell corregido en otro commit independiente.
+   * **Commit:** [4995012](https://github.com/Albermg27/cs-2026-grupo-2/commit/4995012)
+
+4. **Actualización de versión siguiendo SemVer:**
+   ```bash
+   git add pom.xml sonar-project.properties
+   git commit -m "version to 1.3.1"
+   ```
+   * **Explicación:** Al ser una refactorización sin nueva funcionalidad, se incrementa únicamente el patch de `1.3.0` a `1.3.1`.
+   * **Commit:** [8a5cb6d](https://github.com/Albermg27/cs-2026-grupo-2/commit/8a5cb6d)
+
+5. **Subida de la rama a GitHub:**
+   ```bash
+   git push origin refactoring
+   ```
+   * **Explicación:** Se publica la rama en GitHub para abrir el Pull Request y ejecutar los workflows configurados.
+   * **Ejecución Workflow 1:** (https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26395415993)
+
+6. **Creación del Pull Request:**
+   Se creó un Pull Request desde la rama `refactoring` hacia `main`, indicando los code smells corregidos y la subida de versión a `1.3.1`.
+
+   * **Pull Request:** (https://github.com/Albermg27/cs-2026-grupo-2/pull/6/checks)
+   * **Ejecución Workflow 2:** (https://github.com/Albermg27/cs-2026-grupo-2/pull/6)
+
+7. **Preparación de Azure antes del merge:**
+   Antes de fusionar la rama, se ejecutó manualmente el workflow `Create & Deploy Azure Container App` desde `main`, indicando como tag de imagen `1.3.0`, para asegurar que la aplicación de producción estaba creada y disponible en Azure.
+
+   * **Ejecución Create Azure:** (https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26408596366)
+
+8. **Merge a main y despliegue de la versión 1.3.1:**
+   Tras comprobar que la Pull Request estaba preparada, se fusionó en `main`. Este merge lanzó el workflow de producción, que construyó y publicó la imagen Docker `banking-app-production:1.3.1` y actualizó la aplicación desplegada en Azure.
+
+   * **Merge commit:** [4fc7de7](https://github.com/Albermg27/cs-2026-grupo-2/commit/4fc7de7)
+   * **Ejecución Workflow 3:** (https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26409054341)
+   * **Imagen DockerHub:** [marcosgrc/banking-app-production:1.3.1](https://hub.docker.com/layers/marcosgrc/banking-app-production/1.3.1/images/sha256-4c6273d4cfd7d9abc759aa74404f61319e4d8d8c235d29d8d83374d48bc9d313)
+
+9. **Captura de la aplicación desplegada:**
+   Una vez completado el despliegue, se accedió a la URL de Azure Container Apps y se comprobó que la pantalla de login mostraba la versión `v1.3.1`.
+
+   ![Captura de la aplicación desplegada en Azure v1.3.1](img/DespliegueAzure_1-3-1.png)
+
+10. **Eliminación de Azure para evitar consumo de saldo:**
+    Después de obtener la captura final, se debe ejecutar el workflow `delete azure` desde `main` para eliminar la Container App y su entorno.
+
+    * **Ejecución Delete Azure:** (https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26411546064)
 
 
 ## Workflow 4
