@@ -305,6 +305,35 @@ Para la implementación de la **Feature-1**, cuya funcionalidad consiste en limi
 #### Feature-2
 Para la implementación de la **Feature-2**, cuya funcionalidad consiste en impedir que un usuario con el atributo `banned` a `true` realice operaciones sobre su cuenta, se siguieron los siguientes pasos y comandos de Git.
 
+1. **Creación y cambio a la rama de desarrollo:**
+   ```bash
+   git checkout -b feature-2/user-banned
+   ```
+   * **Explicación:** Este comando crea una rama local llamada `feature-2/user-banned` a partir de `main` y nos cambia automáticamente a ella para poder trabajar de manera aislada y segura en el desarrollo de la funcionalidad.
+
+2. **Implementación de la funcionalidad en el código:**
+   Durante esta etapa, se modificaron los siguientes componentes de la aplicación:
+   * **Entidad `User` (`src/main/java/es/codeurjc/model/User.java`):** Se añadió el atributo `banned` de tipo `boolean` con valor por defecto `false`, junto con sus métodos *getter* (`isBanned`) y *setter* (`setBanned`) correspondientes. Al ser un valor por defecto `false`, los usuarios ya existentes en la base de datos no se ven afectados por la nueva restricción.
+   * **Servicio `AccountService` (`src/main/java/es/codeurjc/service/AccountService.java`):** Se incorporó un método privado `validateUserNotBanned(User user)` encargado de lanzar una excepción del tipo `IllegalArgumentException` con el mensaje `"User is banned and cannot perform account operations"` cuando el usuario tiene el atributo `banned` a `true`. Esta validación se invoca al inicio de los métodos `deposit`, `withdraw` y `transfer`. En el caso de las transferencias, la comprobación se realiza tanto sobre el usuario remitente como sobre el destinatario, cumpliendo así la regla de negocio que impide a un usuario baneado tanto enviar como recibir dinero.
+
+3. **Añadir los cambios al área de preparación (*staging area*):**
+   ```bash
+   git add src/main/java/es/codeurjc/model/User.java src/main/java/es/codeurjc/service/AccountService.java
+   ```
+   * **Explicación:** Prepara y añade los dos ficheros modificados al área de preparación de Git, indicando que formarán parte de la próxima confirmación o commit.
+
+4. **Guardar los cambios (Commit):**
+   ```bash
+   git commit -m "feat(user): add banned attribute (feature-2 commit 1 - funcionalidad)"
+   ```
+   * **Explicación:** Consolida y guarda en el historial de confirmaciones de la rama local los cambios preparados, acompañados de un mensaje de commit que describe la naturaleza de la modificación.
+
+5. **Publicación y subida de la rama a GitHub (Push):**
+   ```bash
+   git push -u origin feature-2/user-banned
+   ```
+   * **Explicación:** Sube la rama local `feature-2/user-banned` con su nuevo commit a GitHub y establece el seguimiento con la rama remota (`-u`), permitiendo que la rama esté disponible para el resto del equipo y dejándola lista para que el compañero o compañera de pareja pueda continuar con la implementación de los tests unitarios.
+
 6. **Implementación de los tests unitarios de la Feature 2:**
     Durante esta etapa se modificó el fichero `src/test/java/es/codeurjc/unit/AccountServiceTest.java` para añadir pruebas que verifican el correcto funcionamiento de la restricción de usuarios baneados.
 
