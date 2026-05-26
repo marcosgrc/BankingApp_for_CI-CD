@@ -180,11 +180,11 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 
 ### Captura de la aplicación desplegada en Azure
 
-![Captura Aplicación en Azure](img/DespliegueAzure_1-3-1.png)
+![Captura Aplicación en Azure](img/LastDeployWeb.png)
 
 
 ### Captura del dashboard de Azure con la última versión desplegada
-![Captura de la aplicación desplegada en Azure](img/DashboardAzure_LastDesploy.png)
+![Captura de la aplicación desplegada en Azure](img/AzureDashboardLastDeploy.png)
 
 
 ## Desarrollo con GitHubFlow
@@ -299,7 +299,7 @@ Para la implementación de la **Feature-1**, cuya funcionalidad consiste en limi
     Durante este workflow se construyó y publicó la imagen Docker de la aplicación, pudiendo ser consultada en el siguiente enlace: [marcosgrc/banking-app-production:1.1.0](https://hub.docker.com/r/marcosgrc/banking-app-production/tags?name=1.1.0)
 
     Además, una vez completado el despliegue, Azure genera una URL pública desde la que puede accederse a la aplicación desplegada:
-    ![Aplicación desplegada v1.1.0](![alt text](image.png))
+    ![Aplicación desplegada v1.1.0](image.png)
 
 
 #### Feature-2
@@ -442,7 +442,7 @@ Para la implementación de la funcionalidad de la **Feature-3**, que consiste en
 
    Esto desencadena el Workflow 3, su resultado es accesible en el siguiente link: [Resultado Workflow 3](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26374113718/job/77631387307)
 
-   Este workflow crea una imagen que se sube a Docker Hub y se despliega en Azure. El link a la imagen en Docker Hub es el siguiente: [URL Docker Hub](https://hub.docker.com/layers/marcosgrc/banking-app-production/1.3.0/images/sha256-51ddb8e5a3ccb38d7f70ead5bbf10b0fb01af96917b2733975ae8bc6e6e774b2) 
+   Este workflow crea una imagen que se sube a Docker Hub y se despliega en Azure. El link a la imagen en Docker Hub es el siguiente: [marcosgrc/banking-app-production:1.3.0](https://hub.docker.com/layers/marcosgrc/banking-app-production/1.3.0/images/sha256-51ddb8e5a3ccb38d7f70ead5bbf10b0fb01af96917b2733975ae8bc6e6e774b2) 
 
    Y aqui encontramos la captura de la aplicación desplegada en Azure, donde podemos ver la etiqueta de la versión correspondiente, en este caso la 1.3.0:
    ![Captura de la aplicación desplegada en Azure](img/DespliegueAzure_1-3-0.png)
