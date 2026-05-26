@@ -197,7 +197,6 @@ En esta práctica he ampliado la batería de pruebas E2E en `TransferE2ETest`, a
 | Workflow 2 | Laura y Jorge | [Added workflow2](https://github.com/Albermg27/cs-2026-grupo-2/commit/53683c3f13edf30208b6af6296659c6ad80d44fc) |
 | Workflow 3 | Adrián y Naroa | [Implementación workflow 3 (Adrián y Naroa)](https://github.com/Albermg27/cs-2026-grupo-2/commit/780a3df4955f3c46c079ccac9d3eac61ca11728c), [Implementación SmokeTest](https://github.com/Albermg27/cs-2026-grupo-2/commit/bb946564ff854ce6a322032129fdfa96c5645a18#diff-7fd5462a84a1972e20eb2b6a271e524f2cfc098beb8d6f4f979065a4f6dacb56) |
 | Workflow 4 | Alberto e Icíar | [Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/27ec3ee89168d08e3a1995cf9ac63096790b56c6) |
-| Documentación Workflow 4 | Alberto e Icíar | [Documentación Workflow 4 (Alberto e Icíar)](https://github.com/Albermg27/cs-2026-grupo-2/commit/9aa6ac6d94b08a7e4d318adb7246d359a4beff7a) |
 | Workflows extra: deploy and delete azure app | Marcos | [Workflows create and delete azure app](https://github.com/Albermg27/cs-2026-grupo-2/commit/2646efa8db6cd74289e1a0059bbff71f64a19959) |
 | feature-1 | Naroa y Alberto | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/502f6f7402ca7c7538c5b0793a18b4786e9e34a2), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/5b22dc540a542934ae247be11e41bb1bd59b1a80) |
 | feature-2 | Adrián y Jorge | [Implementación](https://github.com/Albermg27/cs-2026-grupo-2/commit/c87e795b2f5040366e2394f090eb6bfc00d303de), [Pruebas](https://github.com/Albermg27/cs-2026-grupo-2/commit/bbad60287f83fc0fbda0db9490fd4ae5a335843f) |
@@ -535,7 +534,7 @@ Los pasos seguidos fueron:
 
 Este workflow (`Nightly Cross-Browser Workflow`) está diseñado para ejecutarse de forma automática todas las noches a las 2:00 (configurado mediante la expresión `cron: 0 2 * * *`). Además, incluye el desencadenador `workflow_dispatch` para permitir ejecuciones manuales desde la interfaz de GitHub.
 
-> **Nota técnica:** Aunque el workflow está programado a las 2:00 AM (4:00 AM en horario local de España), los entornos compartidos de GitHub Actions ejecutan los eventos de tipo schedule con un margen de retraso variable condicionado por la carga global de los servidores de GitHub. Así pues, como se evidencia en el historial de ejecuciones, el pipeline completó su ejecución programada automatizada a las 8:06 AM.
+> **Nota técnica:** Aunque el workflow está programado a las 2:00 AM (4:00 AM en horario local de España), los entornos compartidos de GitHub Actions ejecutan los eventos de tipo schedule con un margen de retraso variable condicionado por la carga global de los servidores de GitHub. Así pues, como se evidencia en el historial de ejecuciones, el pipeline completó su ejecución programada automatizada a las 8:12 AM.
 
 El flujo se divide en dos trabajos (jobs) secuenciales:
 
@@ -549,7 +548,7 @@ El flujo se divide en dos trabajos (jobs) secuenciales:
 
 2. **`publish-nightly`**: 
 
-    * Este job depende estrictamente del éxito del anterior (`needs: cross-browser-e2e`), si alguna de las pruebas en la matriz falla el job se cancela de forma segura. 
+   * Este job depende estrictamente del éxito del anterior (`needs: cross-browser-e2e`), si alguna de las pruebas en la matriz falla el job se cancela de forma segura. 
    * Genera de forma dinámica una etiqueta con la fecha actual en formato `nightly-AAAA-MM-DD`.
    * Construye la imagen Docker (`banking-app`) omitiendo las pruebas unitarias (`-DskipTests`) mediante el plugin de Spring Boot.
    * Se autentica en DockerHub utilizando secretos seguros del repositorio (`DOCKERHUB_USERNAME` y `DOCKERHUB_TOKEN`).
@@ -557,6 +556,6 @@ El flujo se divide en dos trabajos (jobs) secuenciales:
 
 
 #### Enlaces
-* **Última ejecución del Workflow:** [Ejecución de Workflow 4 (Nightly)](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26353622199)
-* **Artefacto generado en DockerHub:** [marcosgrc/banking-app:nightly-2026-05-24](https://hub.docker.com/r/marcosgrc/banking-app/tags)
+* **Última ejecución del Workflow:** [Ejecución de Workflow 4](https://github.com/Albermg27/cs-2026-grupo-2/actions/runs/26435606390)
+* **Artefacto generado en DockerHub:** [marcosgrc/banking-app:nightly-2026-05-26](https://hub.docker.com/layers/marcosgrc/banking-app/nightly-2026-05-26/images/sha256-4c6273d4cfd7d9abc759aa74404f61319e4d8d8c235d29d8d83374d48bc9d313)
 
